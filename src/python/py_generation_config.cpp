@@ -456,7 +456,9 @@ void init_generation_config(py::module_& m) {
         .def_readwrite("include_stop_str_in_output", &GenerationConfig::include_stop_str_in_output)
         .def_readwrite("stop_token_ids", &GenerationConfig::stop_token_ids)
         .def_readwrite("structured_output_config", &GenerationConfig::structured_output_config)
-        .def_readwrite("parsers", &GenerationConfig::parsers, py::keep_alive<1, 2>())
+        .def_property("parsers",
+            [](GenerationConfig& self) -> auto& { return self.parsers; },
+            py::cpp_function([](GenerationConfig& self, std::vector<std::shared_ptr<ov::genai::Parser>> val) { self.parsers = std::move(val); }, py::keep_alive<1, 2>()))
         .def_readwrite("adapters", &GenerationConfig::adapters)
         .def_readwrite("apply_chat_template", &GenerationConfig::apply_chat_template)
         .def("set_eos_token_id", &GenerationConfig::set_eos_token_id, py::arg("tokenizer_eos_token_id"))
